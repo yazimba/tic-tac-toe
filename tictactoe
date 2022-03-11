@@ -1,0 +1,117 @@
+#!/bin/bash
+
+#Array und Variablen für die nummern im tictactoe feld
+N=( 1 2 3 4 5 6 7 8 9 )
+declare -a number_check
+GAMENOTDONE=true
+#Ansage des Spiels
+#Variable die am Ende den Win-Count angibt und schlussendlich das spiel beendet
+TABLECOUNT=1
+declare -i TABLECOUNT
+
+echo	"Tic-Tac-Toe"
+echo	"Los geht’s!"
+echo " "
+echo	"Spieler1:"
+echo " "
+
+echo	"Wähle ein Feld mithilfe der Zahlen zwischen 1 und 9:"
+echo " "
+# Die Optionen 1-9 Werden von Arrays angegeben 
+#Hier wird das tictactoe feld in eine Funktion
+#gesteckt damit es jedesmal wieder auf taucht
+
+spiel_feld () {
+echo	"${N[0]} | ${N[1]} | ${N[2]}"
+echo	"---------"
+echo	"${N[3]} | ${N[4]} | ${N[5]}"
+echo	"---------"
+echo	"${N[6]} | ${N[7]} | ${N[8]}"
+echo " "
+}
+
+#Hier Beginnt der Prozess wo die Optionswahl mit entweder X oder O ersetzt
+switch_variable () {
+if [[ $(( $TABLECOUNT % 2 )) == 0 ]]
+then
+SYMBOL="O"
+else
+SYMBOL="X"
+fi
+}
+
+#hier wird die Funktion definiert und angewendet die verhindert das man ein Feld zwei mal auswählen kann
+
+
+
+
+input_answer () {
+switch_variable
+
+echo "Welches Feld wollen sie auswählen?"
+read  ANSWER
+
+#echo "Dieses Feld ist schon belegt! Wählen sie ein anderes aus"
+if [[ $ANSWER -ge 1 && $ANSWER -le 9 ]] 
+then
+	if [[ N[$(($ANSWER-1))] -eq $ANSWER ]]
+	then
+		N[$(($ANSWER-1))]=$SYMBOL
+	else
+	TABLECOUNT=$(($TABLECOUNT - 1)) 
+	echo "Dieses Feld ist schon belegt! Wählen sie ein anderes aus"
+	
+
+	fi
+fi
+
+
+}
+
+
+
+
+#Die unterdran definierte Funktion prüft ob jemand Gewonnen hat in dem sie Jede mögliche Gewinn-Art vergleicht mit dem Symbol. 
+check_match () {
+if [[ ${N[$1]} == ${N[$2]} && ${N[$1]} == ${N[$3]} ]]
+then
+
+GAMENOTDONE=false
+clear
+echo "${N[$1]} Hat die Runde gewonnen!"
+
+elif [[ $TABLECOUNT == 10 && $GAMENOTDONE == true ]]
+then
+GAMENOTDONE=false
+clear
+echo "Das Spiel war unentschieden!"
+fi
+}
+check_win () {
+
+check_match 0 3 6
+check_match 0 4 8
+check_match 3 4 5
+check_match 6 7 8
+check_match 1 4 7
+check_match 2 5 8
+check_match 2 4 6
+check_match 0 1 2
+}
+ 
+
+
+#PART1 Hier wird die Funktion in ein For Loop gesteckt 
+
+#
+while [ $GAMENOTDONE == true ]
+do
+	check_win
+	spiel_feld
+	TABLECOUNT+=1
+	input_answer
+	switch_variable
+
+done
+
+echo ${number_check[@]}
